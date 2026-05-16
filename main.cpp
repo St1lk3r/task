@@ -35,10 +35,11 @@ class DisjointSet{ public:
 class Solution {
 public:
 
-    std::vector<std::pair<uint32_t, uint32_t>> dir = {{0,1},{0,-1},{1,0},{-1,0}};
+    std::vector<std::pair<uint32_t, uint32_t>> dir = {{0,-1},{-1,0}};
 
     int numIslands(std::vector<uint32_t>& grid, int m, int n)
     {
+        std::swap(n,m);
         int all = 0;
         for (size_t i = 0; i < n; ++i) {
             for (size_t j = 0; j < m; ++j) {
