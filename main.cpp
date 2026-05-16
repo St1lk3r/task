@@ -19,37 +19,63 @@ typedef long long ll;
 
 #define all(v) v.begin(), v.end()
 
+
+class DisjointSet{ public:
+
+    std::vector<int> parent;
+
+    DisjointSet(int n): parent(n) { for(int i=0; i<n; i++) parent[i] = i; }
+
+    void join(int a, int b) { parent[find(b)] = find(a); }
+
+    int find(int a){ return a == parent[a] ? a : parent[a] = find(parent[a]); }
+
+    bool check(int a, int b){ return find(a) == find(b); }
+};
 class Solution {
 public:
 
-    std::vector<std::vector<bool>> used;
     std::vector<std::pair<uint32_t, uint32_t>> dir = {{0,1},{0,-1},{1,0},{-1,0}};
 
-
-    void dfs(ll i,ll j){
-        used[i][j] = true;
-        for(auto d : dir){
-            ll x = i + d.first;
-            ll y = j + d.second;
-            if(x >= 0 && x < used.size() && y >= 0 && y < used[0].size() && !used[x][y]){
-                dfs(x,y);
-            }
-        }
-    }
     int numIslands(std::vector<uint32_t>& grid, int m, int n)
     {
-        used.assign(n,std::vector<bool>(m,false));
-        int ans = 0;
+        int all = 0;
         for (size_t i = 0; i < n; ++i) {
             for (size_t j = 0; j < m; ++j) {
                 uint32_t ind = i * m + j;
-                if (grid[ind] == 1 && !used[i][j]) {
-                    dfs(i, j);
-                    ++ans;
+                if (grid[ind] == 1) {
+                    ++all;
                 }
             }
         }
-        return ans;
+
+        DisjointSet dsu(n*m);
+
+        for (size_t i = 0; i < n; ++i) {
+            for (size_t j = 0; j < m; ++j) {
+                uint32_t ind = i * m + j;
+                if (grid[ind] == 0) {
+                    continue;
+                }
+
+                for(const auto& [dx,dy] : dir) {
+                    uint32_t nx = i + dx;
+                    uint32_t ny = j + dy;
+                    if (nx < 0 || nx >= n || ny < 0 || ny >= m) {
+                        continue;
+                    }
+                    uint32_t nind = nx * m + ny;
+                    if (grid[nind] == 1) {
+                        if(dsu.check(ind, nind)){
+                            continue;
+                        }
+                        dsu.join(ind, nind);
+                        all--;
+                    }
+                }
+            }
+        }        
+        return all;
     }
 };
 
